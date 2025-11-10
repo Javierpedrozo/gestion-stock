@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">  <!-- Namespace para Thymeleaf -->
+<head>
+    <title>Lista de Productos</title>
+    <!-- Opcional: Agrega CSS para estilo -->
+    <style>
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid black; padding: 8px; text-align: left; }
+    </style>
+</head>
+<body>
+<h1>Gestión de Stock - Productos</h1>
+
+<table>
+    <thead>
+    <tr>
+        <th>SKU</th>
+        <th>Nombre</th>  <!-- Ajusta a tus campos en Producto -->
+        <th>Stock Actual</th>
+        <!-- Agrega más columnas según tu modelo Producto -->
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="producto : ${productos}">  <!-- Loop sobre la lista enviada del controlador -->
+        <td th:text="${producto.sku}"></td>  <!-- Muestra datos dinámicos -->
+        <td th:text="${producto.nombre}"></td>  <!-- Asume que tienes un campo 'nombre' -->
+        <td th:text="${producto.stockActual}"></td>
+    </tr>
+    </tbody>
+</table>
+
+<p th:if="${productos.isEmpty()}">No hay productos disponibles.</p>  <!-- Condicional -->
+
+<!-- Opcional: Form para agregar nuevo producto -->
+<h2>Agregar Producto</h2>
+<form th:action="@{/guardarProducto}" method="post">  <!-- Apunta a un endpoint POST en controlador -->
+    <label>SKU: <input type="text" name="sku"/></label>
+    <label>Nombre: <input type="text" name="nombre"/></label>
+    <label>Stock Inicial: <input type="number" name="stockInicial"/></label>
+    <button type="submit">Guardar</button>
+</form>
+</body>
+</html>
