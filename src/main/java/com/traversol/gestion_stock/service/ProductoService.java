@@ -24,4 +24,9 @@ public class ProductoService {
     public boolean existsBySku(String sku) {
         return repository.existsBySku(sku);
     }
+
+    // Retorna null si no encuentra, o usa orElseThrow para excepción
+    public Producto findBySku(String sku) {
+        return repository.findBySku(sku).orElse(null);
+    }
 }

@@ -10,7 +10,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @SpringBootApplication
-public class Application implements CommandLineRunner {
+
+public class GestionStockApplication implements CommandLineRunner {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
@@ -19,7 +20,7 @@ public class Application implements CommandLineRunner {
     private PasswordEncoder passwordEncoder;
 
     public static void main(String[] args) {
-        SpringApplication.run(Application.class, args);
+        SpringApplication.run(GestionStockApplication.class, args);
     }
 
     @Override
@@ -31,21 +32,21 @@ public class Application implements CommandLineRunner {
             admin.setNombre("Admin");
             admin.setEmail("admin@traversol.com");
             admin.setPassword(passwordEncoder.encode("Pedrozo123")); // ← HASHEADO
-            admin.setRol(Rol.ADMINISTRADOR);
+            admin.setRol(Usuario.Rol.ADMINISTRADOR);
             usuarioRepository.save(admin);
 
             Usuario empleado = new Usuario();
             empleado.setNombre("Empleado");
             empleado.setEmail("empleado@traversol.com");
             empleado.setPassword(passwordEncoder.encode("Garcia123"));
-            empleado.setRol(Rol.EMPLEADO);
+            empleado.setRol(Usuario.Rol.EMPLEADO);
             usuarioRepository.save(empleado);
 
             Usuario gerente = new Usuario();
             gerente.setNombre("Gerente");
             gerente.setEmail("gerente@traversol.com");
             gerente.setPassword(passwordEncoder.encode("Pedrozo1234"));
-            gerente.setRol(Rol.GERENTE);
+            gerente.setRol(Usuario.Rol.ADMINISTRADOR);
             usuarioRepository.save(gerente);
 
             System.out.println("USUARIOS CREADOS CON ÉXITO");

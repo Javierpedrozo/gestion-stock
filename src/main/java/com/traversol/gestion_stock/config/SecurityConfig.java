@@ -35,7 +35,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .authenticationProvider(authenticationProvider())  // Agrega esto para usar el provider
+                .authenticationProvider(authenticationProvider())
                 .authorizeHttpRequests((requests) -> requests
                         .requestMatchers("/login", "/css/**", "/js/**").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMINISTRADOR")
@@ -45,8 +45,8 @@ public class SecurityConfig {
 
                 .formLogin(form -> form
                         .loginPage("/login")
-                        .usernameParameter("loginInput")     // ← COINCIDE CON HTML
-                        .passwordParameter("password")       // ← COINCIDE CON HTML
+                        .usernameParameter("loginInput")
+                        .passwordParameter("password")
                         .defaultSuccessUrl("/home", true)
                         .permitAll()
                 )

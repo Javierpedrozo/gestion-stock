@@ -8,7 +8,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
     <style>
         body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #a8c0ff 0%, #8fa8e6 100%); /* Azules más claros */
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -18,18 +18,18 @@
             background: white;
             padding: 2.5rem;
             border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
             max-width: 400px;
             width: 100%;
         }
         .btn-login {
-            background: #667eea;
+            background: #6c8ef5; /* Azul más claro para el botón */
             border: none;
             font-weight: bold;
             padding: 12px;
         }
         .btn-login:hover {
-            background: #5a6fd8;
+            background: #5a7de3; /* Azul ligeramente más oscuro al hacer hover */
         }
         .error {
             color: #dc3545;
@@ -45,12 +45,15 @@
             border-right: none;
         }
         .form-control:focus {
-            box-shadow: none;
-            border-color: #667eea;
+            box-shadow: 0 0 0 2px rgba(108, 142, 245, 0.25); /* Resplandor más suave */
+            border-color: #6c8ef5;
         }
         .input-group:focus-within .form-control,
         .input-group:focus-within .input-group-text {
-            border-color: #667eea;
+            border-color: #6c8ef5;
+        }
+        .text-primary {
+            color: #6c8ef5 !important; /* Color del título más claro */
         }
     </style>
 </head>

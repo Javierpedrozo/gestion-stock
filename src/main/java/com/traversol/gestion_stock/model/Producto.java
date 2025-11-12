@@ -18,18 +18,28 @@ public class Producto {
     @Column(nullable = false)
     private String nombre;
 
-    @Column(name = "unidad_medida", nullable = false)
+    @Column(nullable = false)
     private String unidadMedida;
 
-    @Column(name = "stock_actual")
     private Integer stockActual = 0;
 
-    @Column(name = "stock_minimo")
     private Integer stockMinimo = 0;
 
-    @Column(name = "stock_inicial")
     private Integer stockInicial = 0;
 
-    @Column(name = "fecha_creacion")
-    private Instant fechaCreacion = Instant.now();
+    // Getters y Setters
+    public Integer getId() { return id; }
+    public void setId(Integer id) { this.id = id; }
+    public String getSku() { return sku; }
+    public void setSku(String sku) { this.sku = sku; }
+    public String getNombre() { return nombre; }
+    public void setNombre(String nombre) { this.nombre = nombre; }
+    public String getUnidadMedida() { return unidadMedida; }
+    public void setUnidadMedida(String unidadMedida) { this.unidadMedida = unidadMedida; }
+    public Integer getStockActual() { return stockActual; }
+    public void setStockActual(Integer stockActual) { this.stockActual = stockActual; }
+    public Integer getStockMinimo() { return stockMinimo; }
+    public void setStockMinimo(Integer stockMinimo) { this.stockMinimo = stockMinimo; }
+    public Integer getStockInicial() { return stockInicial; }
+    public void setStockInicial(Integer stockInicial) { this.stockInicial = stockInicial; }
 }
