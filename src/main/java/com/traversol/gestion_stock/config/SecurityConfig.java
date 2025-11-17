@@ -1,5 +1,6 @@
 package com.traversol.gestion_stock.config;
 
+
 import com.traversol.gestion_stock.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -40,9 +41,9 @@ public class SecurityConfig {
                         .requestMatchers("/login", "/css/**", "/js/**").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMINISTRADOR")
                         .requestMatchers("/empleado/**").hasAnyRole("EMPLEADO", "GERENTE")
+                        .requestMatchers("/egreso", "/egreso/**").hasAnyRole("ADMINISTRADOR", "GERENTE")  // Nuevo: Restricción para egreso (excluye EMPLEADO)
                         .anyRequest().authenticated()
                 )
-
                 .formLogin(form -> form
                         .loginPage("/login")
                         .usernameParameter("loginInput")
@@ -50,7 +51,6 @@ public class SecurityConfig {
                         .defaultSuccessUrl("/home", true)
                         .permitAll()
                 )
-
                 .logout((logout) -> logout
                         .logoutUrl("/logout")
                         .logoutSuccessUrl("/login?logout")

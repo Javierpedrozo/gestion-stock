@@ -11,7 +11,6 @@ import com.traversol.gestion_stock.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -32,26 +31,23 @@ public class TransaccionController {
     @Autowired
     private UsuarioService usuarioService;
 
-    // Nuevo: Agrega @GetMapping para mostrar el form (faltaba, para GET /ingreso)
+    // Ingreso (tu código original)
     @GetMapping("/ingreso")
     public String mostrarFormularioIngreso() {
-        return "form-ingreso";  // Nombre de tu vista
+        return "form-ingreso";
     }
 
     @PostMapping("/ingreso")
     public String registrarIngreso(@RequestParam String sku, @RequestParam int cantidad, @RequestParam String motivo, Model model) {
         try {
             if (cantidad <= 0) {
-                throw new IllegalArgumentException("Cantidad debe ser positiva (SRS RF1 validación)");
+                throw new IllegalArgumentException("Cantidad debe ser positiva");
             }
-
-            // Obtén usuario actual (fix: usa UserDetails y cast a Usuario, ya que loadUserByUsername retorna UserDetails)
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             String email = auth.getName();
             UserDetails userDetails = usuarioService.loadUserByUsername(email);
-            Usuario usuario = (Usuario) userDetails;  // Cast seguro si Usuario implements UserDetails
+            Usuario usuario = (Usuario) userDetails;
 
-            // Busca producto
             Optional<Producto> optionalProducto = productoService.findBySku(sku);
             if (optionalProducto.isEmpty()) {
                 model.addAttribute("error", "Producto no encontrado con SKU: " + sku);
@@ -59,29 +55,67 @@ public class TransaccionController {
             }
             Producto producto = optionalProducto.get();
 
-            // Crea y guarda transacción
             Transaccion transaccion = new Transaccion();
-            transaccion.setTipo(TipoTransaccion.INGRESO);  // Asume Transaccion.Tipo si es enum anidado
+            transaccion.setTipo(TipoTransaccion.INGRESO);
             transaccion.setCantidad(cantidad);
             transaccion.setMotivo(motivo);
             transaccion.setProducto(producto);
             transaccion.setUsuario(usuario);
             transaccionService.save(transaccion);
 
-            // Actualiza stock (incrementa)
             productoService.actualizarStock(sku, cantidad);
 
-            return "redirect:/home";  // Redirige a dashboard (cambia si es /dashboard)
-        } catch (UsernameNotFoundException e) {
-            model.addAttribute("error", "Usuario no encontrado: " + e.getMessage());
-            return "form-ingreso";
-        } catch (IllegalArgumentException e) {
-            model.addAttribute("error", e.getMessage());
-            return "form-ingreso";
+            return "redirect:/home";
         } catch (Exception e) {
-            model.addAttribute("error", "Error inesperado: " + e.getMessage());
+            model.addAttribute("error", e.getMessage());
             e.printStackTrace();
             return "form-ingreso";
+        }
+    }
+
+    // Nuevo: Egreso (RF2, similar pero resta)
+    @GetMapping("/egreso")
+    public String mostrarFormularioEgreso() {
+        return "form-egreso";  // Crea esta vista similar a form-ingreso
+    }
+
+    @PostMapping("/egreso")
+    public String registrarEgreso(@RequestParam String sku, @RequestParam int cantidad, @RequestParam String motivo, Model model) {
+        try {
+            if (cantidad <= 0) {
+                throw new IllegalArgumentException("Cantidad debe ser positiva");
+            }
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            String email = auth.getName();
+            UserDetails userDetails = usuarioService.loadUserByUsername(email);
+            Usuario usuario = (Usuario) userDetails;
+
+            Optional<Producto> optionalProducto = productoService.findBySku(sku);
+            if (optionalProducto.isEmpty()) {
+                model.addAttribute("error", "Producto no encontrado con SKU: " + sku);
+                return "form-egreso";
+            }
+            Producto producto = optionalProducto.get();
+
+            if (cantidad > producto.getStockActual()) {
+                throw new IllegalArgumentException("Cantidad excede stock disponible (SRS RF2 validación)");
+            }
+
+            Transaccion transaccion = new Transaccion();
+            transaccion.setTipo(TipoTransaccion.EGRESO);
+            transaccion.setCantidad(cantidad);
+            transaccion.setMotivo(motivo);
+            transaccion.setProducto(producto);
+            transaccion.setUsuario(usuario);
+            transaccionService.save(transaccion);
+
+            productoService.actualizarStock(sku, -cantidad);  // Resta con negativo
+
+            return "redirect:/home";
+        } catch (Exception e) {
+            model.addAttribute("error", e.getMessage());
+            e.printStackTrace();
+            return "form-egreso";
         }
     }
 }
