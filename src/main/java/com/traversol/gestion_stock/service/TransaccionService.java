@@ -1,53 +1,45 @@
 package com.traversol.gestion_stock.service;
 
-import com.traversol.gestion_stock.model.Producto;
 import com.traversol.gestion_stock.model.TipoTransaccion;
 import com.traversol.gestion_stock.model.Transaccion;
+import com.traversol.gestion_stock.model.Producto;
 import com.traversol.gestion_stock.model.Usuario;
 import com.traversol.gestion_stock.repository.TransaccionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class TransaccionService {
-
     @Autowired
-    private TransaccionRepository transaccionRepository;
+    private TransaccionRepository repository;
 
     @Autowired
     private ProductoService productoService;
 
+    public Transaccion save(Transaccion transaccion) {
+        return repository.save(transaccion);
+    }
 
-
-    public void registrarTransaccion(String sku, Integer cantidad, String motivo, TipoTransaccion tipo, Usuario usuario) {
-        // Busca el producto por SKU
-        Producto producto = productoService.findBySku(sku);
-        if (producto == null) {
+    // Método para registrar ingreso (línea 34: usa Transaccion.Tipo.INGRESO)
+    public void registrarIngreso(String sku, int cantidad, String motivo, Usuario usuario) {
+        Optional<Producto> optionalProducto = productoService.findBySku(sku);
+        if (optionalProducto.isEmpty()) {
             throw new IllegalArgumentException("Producto no encontrado con SKU: " + sku);
         }
+        Producto producto = optionalProducto.get();
 
-        // Valida stock para egreso
-        if (tipo == TipoTransaccion.EGRESO && cantidad > producto.getStockActual()) {
-            throw new IllegalArgumentException("Stock insuficiente para egreso");
-        }
-
-        // Actualiza stock
-        if (tipo == TipoTransaccion.INGRESO) {
-            producto.setStockActual(producto.getStockActual() + cantidad);
-        } else if (tipo == TipoTransaccion.EGRESO) {
-            producto.setStockActual(producto.getStockActual() - cantidad);
-        }
-
-        // Crea la transacción
+        // Crea transacción con enum calificado
         Transaccion transaccion = new Transaccion();
-        transaccion.setTipo(tipo);
+        transaccion.setTipo(TipoTransaccion.INGRESO);  // Fix: Transaccion.Tipo en lugar de Tipo
         transaccion.setCantidad(cantidad);
         transaccion.setMotivo(motivo);
         transaccion.setProducto(producto);
         transaccion.setUsuario(usuario);
+        save(transaccion);
 
-        // Guarda todo
-        productoService.save(producto);
-        transaccionRepository.save(transaccion);
+        // Actualiza stock (incrementa, SRS RF1 tiempo real)
+        productoService.actualizarStock(sku, cantidad);
     }
 }

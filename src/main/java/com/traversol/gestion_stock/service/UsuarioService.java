@@ -8,9 +8,10 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class UsuarioService implements UserDetailsService {
-
     @Autowired
     private UsuarioRepository usuarioRepository;
 
@@ -19,7 +20,6 @@ public class UsuarioService implements UserDetailsService {
         if (loginInput == null || loginInput.trim().isEmpty()) {
             throw new UsernameNotFoundException("Login vacío");
         }
-
         Usuario usuario;
         if (loginInput.contains("@")) {
             usuario = usuarioRepository.findByEmail(loginInput)
@@ -29,5 +29,15 @@ public class UsuarioService implements UserDetailsService {
                     .orElseThrow(() -> new UsernameNotFoundException("Nombre no encontrado: " + loginInput));
         }
         return usuario;
+    }
+
+    // Nuevo: Expone findByEmail para usar en controladores (e.g., obtener usuario actual)
+    public Optional<Usuario> findByEmail(String email) {
+        return usuarioRepository.findByEmail(email);
+    }
+
+    // Opcional: Expone findByNombre si lo necesitas
+    public Optional<Usuario> findByNombre(String nombre) {
+        return usuarioRepository.findByNombre(nombre);
     }
 }
