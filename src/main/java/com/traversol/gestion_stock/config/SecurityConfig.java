@@ -1,6 +1,5 @@
 package com.traversol.gestion_stock.config;
 
-
 import com.traversol.gestion_stock.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -24,7 +23,6 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    // Nuevo: Provider para evitar ciclo
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
@@ -41,7 +39,9 @@ public class SecurityConfig {
                         .requestMatchers("/login", "/css/**", "/js/**").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMINISTRADOR")
                         .requestMatchers("/empleado/**").hasAnyRole("EMPLEADO", "GERENTE")
-                        .requestMatchers("/egreso", "/egreso/**").hasAnyRole("ADMINISTRADOR", "GERENTE")  // Nuevo: Restricción para egreso (excluye EMPLEADO)
+                        .requestMatchers("/egreso", "/egreso/**").hasAnyRole("ADMINISTRADOR", "GERENTE")  // Egresos solo admin/gerente
+                        .requestMatchers("/desperdicio", "/desperdicio/**").hasAnyRole("ADMINISTRADOR", "GERENTE", "EMPLEADO")  // Ahora incluye empleado
+                        .requestMatchers("/reporte/**").hasAnyRole("ADMINISTRADOR", "GERENTE")
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form

@@ -22,6 +22,7 @@ import java.util.Optional;
 
 @Controller
 public class TransaccionController {
+
     @Autowired
     private ProductoService productoService;
 
@@ -31,7 +32,55 @@ public class TransaccionController {
     @Autowired
     private UsuarioService usuarioService;
 
-    // Ingreso (tu código original)
+    // Desperdicio (RF3)
+    @GetMapping("/desperdicio")
+    public String mostrarFormularioDesperdicio() {
+        return "form-desperdicio";  // Crea esta vista
+    }
+
+    @PostMapping("/desperdicio")
+    public String registrarDesperdicio(@RequestParam String sku, @RequestParam int cantidad, @RequestParam String motivo, Model model) {
+        try {
+            if (cantidad <= 0) {
+                throw new IllegalArgumentException("Cantidad debe ser positiva");
+            }
+            if (motivo == null || motivo.trim().isEmpty()) {
+                throw new IllegalArgumentException("Motivo requerido (SRS RF3)");
+            }
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            String email = auth.getName();
+            UserDetails userDetails = usuarioService.loadUserByUsername(email);
+            Usuario usuario = (Usuario) userDetails;
+
+            Optional<Producto> optionalProducto = productoService.findBySku(sku);
+            if (optionalProducto.isEmpty()) {
+                model.addAttribute("error", "Producto no encontrado con SKU: " + sku);
+                return "form-desperdicio";
+            }
+            Producto producto = optionalProducto.get();
+
+            if (cantidad > producto.getStockActual()) {
+                throw new IllegalArgumentException("Cantidad excede stock disponible (SRS RF3 validación)");
+            }
+
+            Transaccion transaccion = new Transaccion();
+            transaccion.setTipo(TipoTransaccion.DESPERDICIO);
+            transaccion.setCantidad(cantidad);
+            transaccion.setMotivo(motivo);
+            transaccion.setProducto(producto);
+            transaccion.setUsuario(usuario);
+            transaccionService.save(transaccion);
+
+            productoService.actualizarStock(sku, -cantidad);  // Resta del stock
+
+            return "redirect:/home";
+        } catch (Exception e) {
+            model.addAttribute("error", e.getMessage());
+            e.printStackTrace();
+            return "form-desperdicio";
+        }
+    }
+
     @GetMapping("/ingreso")
     public String mostrarFormularioIngreso() {
         return "form-ingreso";
@@ -43,6 +92,7 @@ public class TransaccionController {
             if (cantidad <= 0) {
                 throw new IllegalArgumentException("Cantidad debe ser positiva");
             }
+
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             String email = auth.getName();
             UserDetails userDetails = usuarioService.loadUserByUsername(email);
@@ -73,10 +123,9 @@ public class TransaccionController {
         }
     }
 
-    // Nuevo: Egreso (RF2, similar pero resta)
     @GetMapping("/egreso")
     public String mostrarFormularioEgreso() {
-        return "form-egreso";  // Crea esta vista similar a form-ingreso
+        return "form-egreso";
     }
 
     @PostMapping("/egreso")
@@ -85,6 +134,7 @@ public class TransaccionController {
             if (cantidad <= 0) {
                 throw new IllegalArgumentException("Cantidad debe ser positiva");
             }
+
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             String email = auth.getName();
             UserDetails userDetails = usuarioService.loadUserByUsername(email);
@@ -109,7 +159,7 @@ public class TransaccionController {
             transaccion.setUsuario(usuario);
             transaccionService.save(transaccion);
 
-            productoService.actualizarStock(sku, -cantidad);  // Resta con negativo
+            productoService.actualizarStock(sku, -cantidad);
 
             return "redirect:/home";
         } catch (Exception e) {

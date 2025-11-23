@@ -30,7 +30,7 @@ public class ProductoService {
         return repository.findBySku(sku);  // Asegúrate de que repository tenga Optional<Producto> findBySku(String sku);
     }
 
-    // Nuevo: Para incrementar/decrementar stock (RF1, RF2, RF3)
+    //Para incrementar/decrementar stock
     public void actualizarStock(String sku, int cantidad) {
         Optional<Producto> optionalProducto = findBySku(sku);
         if (optionalProducto.isEmpty()) {
