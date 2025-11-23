@@ -30,13 +30,10 @@ public class UsuarioService implements UserDetailsService {
         }
         return usuario;
     }
-
-    // Nuevo: Expone findByEmail para usar en controladores (e.g., obtener usuario actual)
     public Optional<Usuario> findByEmail(String email) {
         return usuarioRepository.findByEmail(email);
     }
 
-    // Opcional: Expone findByNombre si lo necesitas
     public Optional<Usuario> findByNombre(String nombre) {
         return usuarioRepository.findByNombre(nombre);
     }

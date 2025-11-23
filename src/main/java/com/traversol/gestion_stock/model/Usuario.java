@@ -38,7 +38,7 @@ public class Usuario implements UserDetails {
         ADMINISTRADOR, EMPLEADO, GERENTE
     }
 
-    // Métodos de UserDetails (requeridos para Spring Security)
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority("ROLE_" + rol.name()));

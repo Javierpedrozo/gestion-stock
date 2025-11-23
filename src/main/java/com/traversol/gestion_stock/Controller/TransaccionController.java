@@ -35,7 +35,7 @@ public class TransaccionController {
     // Desperdicio (RF3)
     @GetMapping("/desperdicio")
     public String mostrarFormularioDesperdicio() {
-        return "form-desperdicio";  // Crea esta vista
+        return "form-desperdicio";
     }
 
     @PostMapping("/desperdicio")
@@ -71,7 +71,7 @@ public class TransaccionController {
             transaccion.setUsuario(usuario);
             transaccionService.save(transaccion);
 
-            productoService.actualizarStock(sku, -cantidad);  // Resta del stock
+            productoService.actualizarStock(sku, -cantidad);
 
             return "redirect:/home";
         } catch (Exception e) {

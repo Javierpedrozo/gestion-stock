@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public interface TransaccionRepository extends JpaRepository<Transaccion, Integer> {  // Nota: ID es Integer, como en tu modelo
+public interface TransaccionRepository extends JpaRepository<Transaccion, Integer> {
 
     @Query("SELECT t FROM Transaccion t WHERE t.fecha >= :fechaInicio AND t.fecha < :fechaFin")
     List<Transaccion> findByFechaBetween(LocalDateTime fechaInicio, LocalDateTime fechaFin);

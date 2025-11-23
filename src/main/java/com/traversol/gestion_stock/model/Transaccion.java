@@ -28,7 +28,7 @@ public class Transaccion {
     @JoinColumn(name = "usuario_id")
     private Usuario usuario;
 
-    // Getters y Setters
+
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }
     public TipoTransaccion getTipo() { return tipo; }

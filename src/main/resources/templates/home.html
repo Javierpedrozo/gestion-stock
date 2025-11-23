@@ -69,6 +69,56 @@
             padding: 8px 15px;
             border-radius: 20px;
         }
+        .stock-alert {
+            background: rgba(23, 162, 184, 0.9);
+            border: 2px solid #0d6efd;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        .stock-alert h4 {
+            color: #dc3545;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #dc3545;
+            padding-bottom: 10px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-shadow: 1px 1px 1px rgba(0,0,0,0.1);
+        }
+        .stock-alert h4::before {
+            content: "⚠";
+            font-size: 1.5em;
+        }
+        .stock-alert ul {
+            margin-bottom: 0;
+        }
+        .stock-alert li {
+            margin-bottom: 10px;
+            padding: 8px 12px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+            border-left: 4px solid #dc3545;
+            color: #212529;
+        }
+        .stock-alert .product-name {
+            color: #dc3545;
+            font-weight: bold;
+            text-shadow: 1px 1px 1px rgba(0,0,0,0.1);
+        }
+        .stock-alert .stock-info {
+            color: #000;
+            font-weight: bold;
+        }
+        .stock-alert .sku {
+            color: #495057;
+            font-family: monospace;
+            background: rgba(255, 255, 255, 0.3);
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
     </style>
 </head>
 <body>
@@ -99,16 +149,26 @@
     </nav>
 </div>
 <div class="main-content" id="main-content">
-
     <h2>Traversol</h2>
     <p>Bordes Atermicos para Piscinas</p>
-</div>
 
-<script>
-    function toggleSidebar() {
-        document.getElementById('sidebar').classList.toggle('collapsed');
-        document.getElementById('main-content').classList.toggle('collapsed');
-    }
-</script>
-</body>
-</html>
+    <!-- Alerta de Stock Mínimo-->
+    <div th:if="${!productosBajos.isEmpty()}" class="stock-alert">
+        <h4>ALERTA DE STOCK MÍNIMO</h4>
+        <ul>
+            <li th:each="producto : ${productosBajos}">
+                Producto <span class="product-name" th:text="${producto.nombre}"></span>
+                  tiene solo <span class="stock-info" th:text="${producto.stockActual}"></span> unidades
+                  (mínimo requerido: <span class="stock-info" th:text="${producto.stockMinimo}"></span>).
+              </li>
+          </ul>
+      </div>
+  </div>
+  <script>
+      function toggleSidebar() {
+          document.getElementById('sidebar').classList.toggle('collapsed');
+          document.getElementById('main-content').classList.toggle('collapsed');
+      }
+  </script>
+  </body>
+  </html>

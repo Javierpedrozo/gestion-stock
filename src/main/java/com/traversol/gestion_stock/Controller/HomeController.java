@@ -1,6 +1,8 @@
 package com.traversol.gestion_stock.Controller;
 
 import com.traversol.gestion_stock.model.Usuario;
+import com.traversol.gestion_stock.service.ProductoService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -8,18 +10,16 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
 public class HomeController {
+    @Autowired
+    private ProductoService productoService;
 
     @GetMapping({"/", "/home"})
     public String home(@AuthenticationPrincipal Usuario usuario, Model model) {
         if (usuario == null) {
-            return "redirect:/login";  // Redirige si no autenticado
+            return "redirect:/login";
         }
         model.addAttribute("usuario", usuario);
-        // Opcional: Lógica por rol (usa Usuario.Rol para el enum anidado)
-        if (usuario.getRol() == Usuario.Rol.GERENTE) {
-            // Ejemplo: Agrega alertas o datos extras para Gerente
-            // model.addAttribute("alertas", alertaService.getAlertasStockBajo()); // Si implementas RF4
-        }
+        model.addAttribute("productosBajos", productoService.getProductosConStockBajo());  // Alertas RF4 para todos los roles
         return "home";
     }
 }

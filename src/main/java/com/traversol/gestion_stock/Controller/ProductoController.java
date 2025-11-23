@@ -23,14 +23,14 @@ public class ProductoController {
         return "lista-productos";
     }
 
-    // Nuevo: Mostrar formulario para agregar producto (RF1)
+    // Muestrar formulario para agregar producto
     @GetMapping("/agregar-producto")
     public String mostrarFormularioAgregar(Model model) {
         model.addAttribute("producto", new Producto());
         return "agregar-producto";  // Vista Thymeleaf
     }
 
-    // Nuevo: Procesar el formulario y guardar (con validaciones del SRS)
+    // Procesar el formulario y guardar
     @PostMapping("/agregar-producto")
     public String agregarProducto(@Valid @ModelAttribute Producto producto, BindingResult result, Model model) {
         if (result.hasErrors()) {
@@ -41,8 +41,8 @@ public class ProductoController {
             return "agregar-producto";
         }
         try {
-            productoService.save(producto);  // Inicializa stockActual = stockInicial
-            return "redirect:/productos";  // Redirige a la lista después de guardar
+            productoService.save(producto);
+            return "redirect:/productos";
         } catch (Exception e) {
             model.addAttribute("error", "Error al guardar: " + e.getMessage());
             return "agregar-producto";

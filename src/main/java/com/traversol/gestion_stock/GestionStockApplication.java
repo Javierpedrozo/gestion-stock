@@ -31,7 +31,7 @@ public class GestionStockApplication implements CommandLineRunner {
             Usuario admin = new Usuario();
             admin.setNombre("Admin");
             admin.setEmail("admin@traversol.com");
-            admin.setPassword(passwordEncoder.encode("Pedrozo123")); // ← HASHEADO
+            admin.setPassword(passwordEncoder.encode("Pedrozo123"));
             admin.setRol(Usuario.Rol.ADMINISTRADOR);
             usuarioRepository.save(admin);
 

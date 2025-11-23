@@ -15,6 +15,6 @@ public class ReporteController {
     @GetMapping("/reporte/semanal")
     public String reporteSemanal(Model model) {
         model.addAttribute("reporte", reporteService.generarReporteSemanal());
-        return "reporte";   // → templates/reporte.html
+        return "reporte";
     }
 }

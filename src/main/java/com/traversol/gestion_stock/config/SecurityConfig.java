@@ -39,8 +39,8 @@ public class SecurityConfig {
                         .requestMatchers("/login", "/css/**", "/js/**").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMINISTRADOR")
                         .requestMatchers("/empleado/**").hasAnyRole("EMPLEADO", "GERENTE")
-                        .requestMatchers("/egreso", "/egreso/**").hasAnyRole("ADMINISTRADOR", "GERENTE")  // Egresos solo admin/gerente
-                        .requestMatchers("/desperdicio", "/desperdicio/**").hasAnyRole("ADMINISTRADOR", "GERENTE", "EMPLEADO")  // Ahora incluye empleado
+                        .requestMatchers("/egreso", "/egreso/**").hasAnyRole("ADMINISTRADOR", "GERENTE")
+                        .requestMatchers("/desperdicio", "/desperdicio/**").hasAnyRole("ADMINISTRADOR", "GERENTE", "EMPLEADO")
                         .requestMatchers("/reporte/**").hasAnyRole("ADMINISTRADOR", "GERENTE")
                         .anyRequest().authenticated()
                 )

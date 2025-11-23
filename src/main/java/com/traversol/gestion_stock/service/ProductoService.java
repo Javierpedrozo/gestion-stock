@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductoService {
@@ -21,16 +22,22 @@ public class ProductoService {
         producto.setStockActual(producto.getStockInicial());
         return repository.save(producto);
     }
+    public List<Producto> getProductosConStockBajo() {
+        return findAll().stream()
+                .filter(p -> p.getStockActual() <= p.getStockMinimo())
+                .collect(Collectors.toList());
+    }
+
 
     public boolean existsBySku(String sku) {
         return repository.existsBySku(sku);
     }
 
     public Optional<Producto> findBySku(String sku) {
-        return repository.findBySku(sku);  // Asegúrate de que repository tenga Optional<Producto> findBySku(String sku);
+        return repository.findBySku(sku);
     }
 
-    //Para incrementar/decrementar stock
+    //Para incrementar y decrementar stock
     public void actualizarStock(String sku, int cantidad) {
         Optional<Producto> optionalProducto = findBySku(sku);
         if (optionalProducto.isEmpty()) {
@@ -39,7 +46,7 @@ public class ProductoService {
         Producto producto = optionalProducto.get();
         int nuevoStock = producto.getStockActual() + cantidad;
         if (nuevoStock < 0) {
-            throw new IllegalArgumentException("Stock no puede ser negativo (SRS RF2/RF3 validación)");
+            throw new IllegalArgumentException("Stock no puede ser negativo");
         }
         producto.setStockActual(nuevoStock);
         repository.save(producto);
